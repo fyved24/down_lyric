@@ -29,13 +29,13 @@ def get_lrc(id):
     return resp.json()['lrc']['lyric']
 
 
-def save_file(name, content):
-    current_dir = os.getcwd()
-    lrcs_dir = f"{current_dir}/lrcs"
+def save_file(path, name, content):
+    lrcs_dir = f"{path}/lrcs"
+    print(lrcs_dir)
     if not os.path.exists(lrcs_dir):
         os.makedirs(lrcs_dir)
 
-    with open(f"lrcs/{name}.lrc", "w", encoding="utf-8") as f:
+    with open(f"{lrcs_dir}/{name}.lrc", "w", encoding="utf-8") as f:
         f.write(content)
 
 
@@ -46,10 +46,10 @@ def load_music_list(filename):
         return music_list
 
 
-def download_lrc(name):
+def download_lrc(path, name):
     music_id, music_name = get_music_id_name(name)
     content = get_lrc(music_id)
-    save_file(music_name, content)
+    save_file(path, music_name, content)
 
 
 class MainWindow(QMainWindow):
@@ -60,6 +60,8 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
         self.ui.choose_file_button.clicked.connect(self.open_file)
+        self.ui.choose_output_dir_button.clicked.connect(self.select_output_path)
+
         self.ui.start_button.clicked.connect(self.download_slot)
 
     def open_file(self):
@@ -67,12 +69,17 @@ class MainWindow(QMainWindow):
         print(filename)
         self.ui.filepath.setText(filename)
 
+    def select_output_path(self):
+        filename = QFileDialog.getExistingDirectory(self, os.getcwd())
+        print(filename)
+        self.ui.output_filepath.setText(filename)
+
     def download_lrc_list(self, listname):
         music_list = load_music_list(listname)
         self.ui.progressBar.setMaximum(len(music_list))
 
         for i, music in enumerate(music_list):
-            download_lrc(music)
+            download_lrc(self.ui.output_filepath.text(), music)
             self.ui.progressBar.setValue(i + 1)
 
     def download_slot(self):
