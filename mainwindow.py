@@ -52,12 +52,6 @@ def download_lrc(name):
     save_file(music_name, content)
 
 
-def download_lrc_list(listname):
-    music_list = load_music_list(listname)
-    for music in music_list:
-        download_lrc(music)
-
-
 class MainWindow(QMainWindow):
 
     def __init__(self):
@@ -73,11 +67,19 @@ class MainWindow(QMainWindow):
         print(filename)
         self.ui.filepath.setText(filename)
 
+    def download_lrc_list(self, listname):
+        music_list = load_music_list(listname)
+        self.ui.progressBar.setMaximum(len(music_list))
+
+        for i, music in enumerate(music_list):
+            download_lrc(music)
+            self.ui.progressBar.setValue(i + 1)
+
     def download_slot(self):
         if self.ui.filepath.text() == '':
             QMessageBox.critical(self, '错误', '歌曲文件路径不能为空')
         else:
-            download_lrc_list(self.ui.filepath.text())
+            self.download_lrc_list(self.ui.filepath.text())
             QMessageBox.information(self, '提示', '歌词下载完成')
 
 # main()
