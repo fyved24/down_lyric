@@ -2,31 +2,49 @@ import requests
 import os
 from forms.ui_mainwindow import Ui_MainWindow
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
-from PySide6.QtNetwork import QTcpSocket
 
-# from dialog import Dialog
-
-
-base_url = "https://netease-cloud-music-api-iota-drab.vercel.app"
-
-search_name = "海阔天空"
+netease_url = "https://netease-cloud-music-api-iota-drab.vercel.app"
+qqmusic_url = 'https://qq-music-api-beta.vercel.app'
 
 
-def get_music_id_name(search_name):
-    resp = requests.get(url=f'{base_url}/search', params={"keywords": search_name})
+def get_netease_music_id_name_list(search_name, maxnum):
+    resp = requests.get(url=f'{netease_url}/search', params={"keywords": search_name})
     print(resp.json())
-    music_info = resp.json()['result']['songs'][0]
-    print(music_info)
-    print(music_info['name'])
-    return music_info['id'], music_info['name']
+    songs_list = []
+    for i, song in enumerate(resp.json()['result']['songs']):
+        if i < maxnum:
+            print(song)
+            print(song['name'])
+            songs_list.append({'id': song['id'], 'name': f"{song['name']}_{i}_{song['artists'][0]['name']}"})
+    return songs_list
 
 
-def get_lrc(id):
+def get_qq_music_id_name_list(search_name, maxnum):
+    resp = requests.get(url=f'{qqmusic_url}/getSmartbox', params={"key": search_name})
+    print(resp.json())
+    songs_list = []
+    for i, song in enumerate(resp.json()['response']['data']['song']['itemlist']):
+        if i < maxnum:
+            print(song)
+            print(song['name'])
+            songs_list.append({'id': song['mid'], 'name': f"{song['name']}_{i}_{song['singer']}"})
+    return songs_list
+
+
+def get_netease_lrc(mid):
     # print(music_info['img1v1Url'])
-    resp = requests.get(url=f'{base_url}/lyric', params={"id": id})
+    resp = requests.get(url=f'{netease_url}/lyric', params={"id": mid})
     print(resp)
     print(resp.json()['lrc']['lyric'])
     return resp.json()['lrc']['lyric']
+
+
+def get_qqmusic_lrc(mid):
+    # print(music_info['img1v1Url'])
+    resp = requests.get(url=f'{qqmusic_url}/getLyric', params={"songmid": mid})
+    print(resp)
+    print(resp.json()['response']['lyric'])
+    return resp.json()['response']['lyric']
 
 
 def save_file(path, name, content):
@@ -46,10 +64,15 @@ def load_music_list(filename):
         return music_list
 
 
-def download_lrc(path, name):
-    music_id, music_name = get_music_id_name(name)
-    content = get_lrc(music_id)
-    save_file(path, music_name, content)
+def download_lrc(path, name, maxnum):
+    music_id_name_list = get_music_id_name(name, maxnum)
+    for music in music_id_name_list:
+        content = get_lrc(music['id'])
+        save_file(path, music['name'], content)
+
+
+get_music_id_name = get_qq_music_id_name_list
+get_lrc = get_qqmusic_lrc
 
 
 class MainWindow(QMainWindow):
@@ -75,11 +98,23 @@ class MainWindow(QMainWindow):
         self.ui.output_filepath.setText(filename)
 
     def download_lrc_list(self, listname):
+        global get_music_id_name
+        global get_lrc
+        down_source = self.ui.down_source.currentIndex()
+        option_nums = self.ui.options_num.currentIndex() + 1
+        if down_source == 0:
+            get_music_id_name = get_netease_music_id_name_list
+            get_lrc = get_netease_lrc
+        else:
+            get_music_id_name = get_qq_music_id_name_list
+            get_lrc = get_qqmusic_lrc
+            
+        print(down_source, option_nums)
         music_list = load_music_list(listname)
         self.ui.progressBar.setMaximum(len(music_list))
 
         for i, music in enumerate(music_list):
-            download_lrc(self.ui.output_filepath.text(), music)
+            download_lrc(self.ui.output_filepath.text(), music, option_nums)
             self.ui.progressBar.setValue(i + 1)
 
     def download_slot(self):
@@ -89,4 +124,6 @@ class MainWindow(QMainWindow):
             self.download_lrc_list(self.ui.filepath.text())
             QMessageBox.information(self, '提示', '歌词下载完成')
 
-# main()
+
+if __name__ == '__main__':
+    download_lrc('D:\PycharmProjects\down_lyric', "星座书上", 3)

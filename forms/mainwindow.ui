@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>472</width>
-    <height>217</height>
+    <width>540</width>
+    <height>278</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QLineEdit" name="filepath">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>30</y>
+      <x>110</x>
+      <y>80</y>
       <width>211</width>
       <height>21</height>
      </rect>
@@ -27,8 +27,8 @@
    <widget class="QPushButton" name="choose_file_button">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>30</y>
+      <x>340</x>
+      <y>80</y>
       <width>101</width>
       <height>21</height>
      </rect>
@@ -40,8 +40,8 @@
    <widget class="QPushButton" name="start_button">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>130</y>
+      <x>210</x>
+      <y>180</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -53,8 +53,8 @@
    <widget class="QProgressBar" name="progressBar">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>100</y>
+      <x>110</x>
+      <y>150</y>
       <width>331</width>
       <height>21</height>
      </rect>
@@ -66,8 +66,8 @@
    <widget class="QLineEdit" name="output_filepath">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>60</y>
+      <x>110</x>
+      <y>110</y>
       <width>211</width>
       <height>21</height>
      </rect>
@@ -76,8 +76,8 @@
    <widget class="QPushButton" name="choose_output_dir_button">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>60</y>
+      <x>340</x>
+      <y>110</y>
       <width>101</width>
       <height>21</height>
      </rect>
@@ -86,13 +86,84 @@
      <string>选择输出目录</string>
     </property>
    </widget>
+   <widget class="QComboBox" name="down_source">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>40</y>
+      <width>69</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>网易云</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>QQ音乐</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QComboBox" name="options_num">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>40</y>
+      <width>69</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>1</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>2</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>3</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>40</y>
+      <width>54</width>
+      <height>12</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>下载源</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>40</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>最大备选数量</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>472</width>
+     <width>540</width>
      <height>23</height>
     </rect>
    </property>
