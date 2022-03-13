@@ -48,6 +48,7 @@ def get_qqmusic_lrc(mid):
 
 
 def save_file(path, name, content):
+    name = name.replace('/', '_')
     lrcs_dir = f"{path}/lrcs"
     print(lrcs_dir)
     if not os.path.exists(lrcs_dir):
@@ -108,7 +109,7 @@ class MainWindow(QMainWindow):
         else:
             get_music_id_name = get_qq_music_id_name_list
             get_lrc = get_qqmusic_lrc
-            
+
         print(down_source, option_nums)
         music_list = load_music_list(listname)
         self.ui.progressBar.setMaximum(len(music_list))
