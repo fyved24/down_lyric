@@ -43,6 +43,7 @@ def get_qqmusic_lrc(mid):
     # print(music_info['img1v1Url'])
     resp = requests.get(url=f'{qqmusic_url}/getLyric', params={"songmid": mid})
     print(resp)
+    print(resp.json())
     print(resp.json()['response']['lyric'])
     return resp.json()['response']['lyric']
 
@@ -68,8 +69,12 @@ def load_music_list(filename):
 def download_lrc(path, name, maxnum):
     music_id_name_list = get_music_id_name(name, maxnum)
     for music in music_id_name_list:
-        content = get_lrc(music['id'])
-        save_file(path, music['name'], content)
+        print(music)
+        try:
+            content = get_lrc(music['id'])
+            save_file(path, music['name'], content)
+        except KeyError as e:
+            print(e)
 
 
 get_music_id_name = get_qq_music_id_name_list
