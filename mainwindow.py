@@ -2,7 +2,8 @@ import requests
 import os
 from forms.ui_mainwindow import Ui_MainWindow
 from PySide6.QtWidgets import QMainWindow, QFileDialog, QMessageBox
-
+from PySide6 import QtCore
+from threading import Thread
 netease_url = "https://netease-cloud-music-api-iota-drab.vercel.app"
 qqmusic_url = 'https://qq-music-api-beta.vercel.app'
 
@@ -82,7 +83,7 @@ get_lrc = get_qqmusic_lrc
 
 
 class MainWindow(QMainWindow):
-
+    download_finished = QtCore.Signal(str, str)
     def __init__(self):
         # 从文件中加载UI定义
         super(MainWindow, self).__init__()
@@ -92,6 +93,7 @@ class MainWindow(QMainWindow):
         self.ui.choose_output_dir_button.clicked.connect(self.select_output_path)
 
         self.ui.start_button.clicked.connect(self.download_slot)
+        self.download_finished.connect(self.message_box)
 
     def open_file(self):
         filename, _ = QFileDialog.getOpenFileName(self, os.getcwd())
@@ -118,18 +120,23 @@ class MainWindow(QMainWindow):
         print(down_source, option_nums)
         music_list = load_music_list(listname)
         self.ui.progressBar.setMaximum(len(music_list))
+        
 
         for i, music in enumerate(music_list):
             download_lrc(self.ui.output_filepath.text(), music, option_nums)
             self.ui.progressBar.setValue(i + 1)
+        self.download_finished.emit("完成", "下载完成")
+
 
     def download_slot(self):
         if self.ui.filepath.text() == '':
-            QMessageBox.critical(self, '错误', '歌曲文件路径不能为空')
+           self.message_box('错误', '歌曲文件路径不能为空')
         else:
-            self.download_lrc_list(self.ui.filepath.text())
-            QMessageBox.information(self, '提示', '歌词下载完成')
+            t = Thread(target=self.download_lrc_list, args=(self.ui.filepath.text(),))
+            t.start()
 
+    def message_box(self, title, msg):
+        QMessageBox.information(self, title, msg)
 
 if __name__ == '__main__':
     download_lrc('D:\PycharmProjects\down_lyric', "星座书上", 3)
